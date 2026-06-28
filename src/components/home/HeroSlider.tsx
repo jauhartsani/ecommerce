@@ -49,7 +49,12 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
 
             return (
               // @ts-ignore
-              <Wrapper key={banner.id} {...wrapperProps} className="relative w-full h-full shrink-0">
+              <Wrapper
+                key={banner.id}
+                {...wrapperProps}
+                className="relative h-full shrink-0"
+                style={{ width: `${100 / banners.length}%` }}
+              >
                 <Image
                   src={banner.image_url}
                   alt={banner.alt_text || `Slide ${index + 1}`}
