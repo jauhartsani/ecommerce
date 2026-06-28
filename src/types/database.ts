@@ -55,6 +55,7 @@ export interface Database {
           image_url: string | null;
           gallery_urls: string[] | null;
           category: string | null;
+          tiktok_url: string | null;
           is_active: boolean;
           is_featured: boolean;
           is_flash_sale: boolean;
@@ -74,6 +75,7 @@ export interface Database {
           image_url?: string | null;
           gallery_urls?: string[] | null;
           category?: string | null;
+          tiktok_url?: string | null;
           is_active?: boolean;
           is_featured?: boolean;
           is_flash_sale?: boolean;
@@ -93,6 +95,7 @@ export interface Database {
           image_url?: string | null;
           gallery_urls?: string[] | null;
           category?: string | null;
+          tiktok_url?: string | null;
           is_active?: boolean;
           is_featured?: boolean;
           is_flash_sale?: boolean;

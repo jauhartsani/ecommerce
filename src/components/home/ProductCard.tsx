@@ -81,6 +81,13 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
             )}
           </div>
 
+          {!compact && product.tiktok_url && (
+            <div className="mt-3 flex items-center gap-2 text-xs text-pink-600 font-semibold">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-pink-100 text-pink-700">🎵</span>
+              <span className="line-clamp-1">Video TikTok tersedia</span>
+            </div>
+          )}
+
           {!compact && (
             <div className="mt-2 w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 rounded-xl text-center transition-colors">
               Pesan Sekarang

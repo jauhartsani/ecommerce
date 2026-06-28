@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     image_url: body.image_url ?? null,
     gallery_urls: body.gallery_urls ?? null,
     category: body.category ?? null,
+    tiktok_url: body.tiktok_url ?? null,
     is_active: body.is_active ?? true,
     is_featured: body.is_featured ?? false,
     is_flash_sale: body.is_flash_sale ?? false,

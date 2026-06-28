@@ -17,6 +17,7 @@ const emptyForm = {
   image_url: "",
   gallery_urls: "",
   category: "",
+  tiktok_url: "",
   is_active: true,
   is_featured: false,
   is_flash_sale: false,
@@ -60,6 +61,7 @@ export default function ProductsPage() {
       image_url: p.image_url || "",
       gallery_urls: (p.gallery_urls || []).join("\n"),
       category: p.category || "",
+      tiktok_url: p.tiktok_url || "",
       is_active: p.is_active,
       is_featured: p.is_featured,
       is_flash_sale: p.is_flash_sale,
@@ -94,6 +96,7 @@ export default function ProductsPage() {
         image_url: form.image_url || null,
         gallery_urls: galleries.length ? galleries : null,
         category: form.category || null,
+        tiktok_url: form.tiktok_url || null,
         is_active: form.is_active,
         is_featured: form.is_featured,
         is_flash_sale: form.is_flash_sale,
@@ -233,6 +236,11 @@ export default function ProductsPage() {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">URL Foto Utama</label>
                     <input type="url" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className={inputCls} placeholder="https://contoh.com/foto.jpg" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Link Video TikTok</label>
+                    <input type="url" value={form.tiktok_url} onChange={(e) => setForm({ ...form, tiktok_url: e.target.value })} className={inputCls} placeholder="https://www.tiktok.com/@user/video/123" />
+                    <p className="text-xs text-gray-400 mt-1">Link video akan ditampilkan di halaman detail produk dan unggulan.</p>
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">Kategori</label>

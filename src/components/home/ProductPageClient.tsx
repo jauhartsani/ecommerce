@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Product, SiteSettings } from "@/types/database";
 import { orderSchema, OrderFormData } from "@/lib/validations";
-import { formatRupiah, normalizeWhatsApp, buildWhatsAppMessage } from "@/lib/utils";
+import { formatRupiah, normalizeWhatsApp, buildWhatsAppMessage, getTikTokEmbedUrl } from "@/lib/utils";
 import FlashSaleTimer from "@/components/ui/FlashSaleTimer";
 import {
   ShoppingCart,
@@ -235,6 +235,43 @@ export default function ProductPageClient({ product, settings, discount }: Props
           />
         </div>
       )}
+
+      {product.tiktok_url && (() => {
+        const embedUrl = getTikTokEmbedUrl(product.tiktok_url);
+        return embedUrl ? (
+          <div className="bg-white mt-2 px-4 py-4">
+            <h2 className="font-bold text-gray-800 mb-3">Video TikTok</h2>
+            <div className="rounded-3xl overflow-hidden border border-pink-100 bg-pink-50">
+              <iframe
+                src={embedUrl}
+                className="w-full aspect-[9/16] min-h-[420px]"
+                loading="lazy"
+                allow="encrypted-media; picture-in-picture; fullscreen"
+                referrerPolicy="strict-origin"
+                title="TikTok embed"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-3">
+              Jika video tidak muncul, buka langsung di TikTok.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white mt-2 px-4 py-4">
+            <h2 className="font-bold text-gray-800 mb-3">Video TikTok</h2>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Tonton video TikTok produk di bawah ini untuk melihat demo atau review yang lebih jelas.
+            </p>
+            <a
+              href={product.tiktok_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-pink-600 px-4 py-3 text-white text-sm font-semibold hover:bg-pink-700 transition-colors"
+            >
+              Tonton di TikTok
+            </a>
+          </div>
+        );
+      })()}
 
       {/* Order Form */}
       <div className="bg-white mt-2 px-4 py-5">

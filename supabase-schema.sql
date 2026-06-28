@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   image_url TEXT,
   gallery_urls TEXT[],
   category TEXT,
+  tiktok_url TEXT,
   is_active BOOLEAN NOT NULL DEFAULT true,
   is_featured BOOLEAN NOT NULL DEFAULT false,
   is_flash_sale BOOLEAN NOT NULL DEFAULT false,

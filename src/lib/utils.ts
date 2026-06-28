@@ -62,6 +62,18 @@ export function discountPercent(original: number, sale: number): number {
   return Math.round(((original - sale) / original) * 100);
 }
 
+export function getTikTokEmbedUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    const pathname = parsed.pathname;
+    const match = pathname.match(/\/video\/(\d+)/) || pathname.match(/\/v\/(\d+)/);
+    const videoId = match?.[1];
+    return videoId ? `https://www.tiktok.com/embed/v2/${videoId}` : null;
+  } catch {
+    return null;
+  }
+}
+
 /** 
  * Flash sale: timer end is stored per-session.
  * Each user gets 30 minutes from their first visit.
