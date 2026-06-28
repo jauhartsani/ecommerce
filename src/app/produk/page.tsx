@@ -56,56 +56,6 @@ interface SearchParams {
   kategori?: string;
 }
 
-async function getData(searchParams: SearchParams) {
-  const supabase = createServerClient();
-
-  const [productsRes, settingsRes] = await Promise.all([
-    supabase
-      .from("products")
-      .select("*")
-      .eq("is_active", true)
-      .order("sold_count", { ascending: false }),
-    supabase.from("settings").select("*"),
-  ]);
-
-  const settings: SiteSettings = {
-    site_name: "HealthPro",
-    whatsapp_number: "6281234567890",
-    bank_name: "BCA",
-    account_number: "1234567890",
-    account_holder: "Admin HealthPro",
-    seo_title_suffix: "Produk Kesehatan Terpercaya",
-    seo_description: "Temukan produk kesehatan terbaik dengan harga terjangkau. Flash sale setiap hari!",
-  };
-  settingsRes.data?.forEach((s: { key: string; value: string }) => {
-    const key = s.key as keyof SiteSettings;
-    if (key in settings) {
-      (settings as Record<keyof SiteSettings, string>)[key] = s.value;
-    }
-  });
-
-  let products = (productsRes.data as Product[]) || [];
-
-  if (searchParams.flash === "1") {
-    products = products.filter((p) => p.is_flash_sale);
-  } else if (searchParams.featured === "1") {
-    products = products.filter((p) => p.is_featured);
-  }
-  if (searchParams.q) {
-    const q = searchParams.q.toLowerCase();
-    products = products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        (p.description || "").toLowerCase().includes(q)
-    );
-  }
-  if (searchParams.kategori) {
-    products = products.filter((p) => p.category === searchParams.kategori);
-  }
-
-  return { products, settings };
-}
-
 export default async function ProdukPage({
   searchParams,
 }: {
