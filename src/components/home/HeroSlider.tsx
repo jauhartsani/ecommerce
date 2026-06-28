@@ -13,13 +13,19 @@ interface HeroSliderProps {
 
 export default function HeroSlider({ banners }: HeroSliderProps) {
   const [current, setCurrent] = useState(0);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState<boolean[]>([]);
 
   const next = useCallback(() => {
     setCurrent((c) => (c + 1) % banners.length);
   }, [banners.length]);
 
-  const prev = () => setCurrent((c) => (c - 1 + banners.length) % banners.length);
+  const prev = useCallback(() => {
+    setCurrent((c) => (c - 1 + banners.length) % banners.length);
+  }, [banners.length]);
+
+  useEffect(() => {
+    setLoaded(new Array(banners.length).fill(false));
+  }, [banners.length]);
 
   useEffect(() => {
     if (banners.length <= 1) return;
@@ -29,28 +35,41 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
 
   if (!banners.length) return <HeroSliderSkeleton />;
 
-  const banner = banners[current];
-  const Wrapper = banner.link_url ? Link : "div";
-  const wrapperProps = banner.link_url ? { href: banner.link_url } : {};
-
   return (
     <div className="relative w-full overflow-hidden bg-gray-100">
       {/* Slides */}
-      <div className="relative w-full aspect-[16/9]">
-        {!loaded && <HeroSliderSkeleton />}
-        {/* @ts-ignore */}
-        <Wrapper {...wrapperProps} className="block w-full h-full">
-          <Image
-            src={banner.image_url}
-            alt={banner.alt_text || `Slide ${current + 1}`}
-            fill
-            priority
-            sizes="100vw"
-            style={{ objectFit: "cover" }}
-            onLoad={() => setLoaded(true)}
-            className={`transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
-          />
-        </Wrapper>
+      <div className="relative w-full aspect-[16/9] overflow-hidden">
+        <div
+          className="absolute inset-0 flex transition-transform duration-700 ease-in-out"
+          style={{ width: `${banners.length * 100}%`, transform: `translateX(-${current * (100 / banners.length)}%)` }}
+        >
+          {banners.map((banner, index) => {
+            const Wrapper = banner.link_url ? Link : "div";
+            const wrapperProps = banner.link_url ? { href: banner.link_url } : {};
+
+            return (
+              // @ts-ignore
+              <Wrapper key={banner.id} {...wrapperProps} className="relative w-full h-full shrink-0">
+                <Image
+                  src={banner.image_url}
+                  alt={banner.alt_text || `Slide ${index + 1}`}
+                  fill
+                  priority
+                  sizes="100vw"
+                  style={{ objectFit: "cover" }}
+                  onLoad={() =>
+                    setLoaded((prev) => {
+                      const nextLoaded = [...prev];
+                      nextLoaded[index] = true;
+                      return nextLoaded;
+                    })
+                  }
+                  className={`transition-opacity duration-500 ${loaded[index] ? "opacity-100" : "opacity-0"}`}
+                />
+              </Wrapper>
+            );
+          })}
+        </div>
       </div>
 
       {/* Controls */}
