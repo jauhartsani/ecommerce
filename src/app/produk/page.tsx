@@ -7,40 +7,6 @@ import { Zap, Star, Search } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-async function getData(searchParams: SearchParams) {
-  const supabase = createServerClient();
-
-  const [productsRes, settingsRes] = await Promise.all([
-    supabase
-      .from("products")
-      .select("*")
-      .eq("is_active", true)
-      .order("sold_count", { ascending: false }),
-    supabase.from("settings").select("*"),
-  ]);
-
-  const settings: SiteSettings = {
-    site_name: "HealthPro",
-    whatsapp_number: "6281234567890",
-    bank_name: "BCA",
-    account_number: "1234567890",
-    account_holder: "Admin HealthPro",
-    seo_title_suffix: "Produk Kesehatan Terpercaya",
-    seo_description: "Temukan produk kesehatan terbaik dengan harga terjangkau. Flash sale setiap hari!",
-  };
-  settingsRes.data?.forEach((s: { key: string; value: string }) => {
-    const key = s.key as keyof SiteSettings;
-    if (key in settings) {
-      (settings as Record<keyof SiteSettings, string>)[key] = s.value;
-    }
-  });
-
-  return {
-    products: (productsRes.data as Product[]) || [],
-    settings,
-  };
-}
-
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getData({});
   return {
