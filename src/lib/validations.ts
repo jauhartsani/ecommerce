@@ -25,6 +25,7 @@ export const settingsSchema = z.object({
   account_holder: z.string().min(3, "Nama pemilik rekening minimal 3 karakter"),
   seo_title_suffix: z.string().optional(),
   seo_description: z.string().optional(),
+  favicon_url: z.string().url("URL favicon tidak valid").or(z.literal("")).optional(),
 });
 
 export type SettingsFormData = z.infer<typeof settingsSchema>;

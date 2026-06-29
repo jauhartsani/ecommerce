@@ -4,6 +4,7 @@ import HeroSlider from "@/components/home/HeroSlider";
 import FlashSaleSection from "@/components/home/FlashSaleSection";
 import ProductCard from "@/components/home/ProductCard";
 import Navbar from "@/components/home/Navbar";
+import TikTokVideoCard from "@/components/home/TikTokVideoCard";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
@@ -68,6 +69,7 @@ export default async function HomePage() {
     await getData();
 
   const recentProducts = allProducts.slice(0, 8);
+  const tiktokProducts = allProducts.filter((p) => p.tiktok_url).slice(0, 4);
 
   return (
     <>
@@ -140,6 +142,25 @@ export default async function HomePage() {
             <div className="grid grid-cols-2 gap-3">
               {featuredProducts.slice(0, 4).map((p) => (
                 <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {tiktokProducts.length > 0 && (
+          <section className="mt-5 px-4">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <span className="text-xs text-pink-600 font-bold uppercase tracking-widest">Video</span>
+                <h2 className="font-display font-bold text-gray-900 text-lg">TikTok Produk</h2>
+              </div>
+              <Link href="/produk" className="text-pink-600 text-sm font-medium flex items-center gap-0.5">
+                Lihat Semua <ChevronRight size={16} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {tiktokProducts.map((p) => (
+                <TikTokVideoCard key={p.id} product={p} />
               ))}
             </div>
           </section>

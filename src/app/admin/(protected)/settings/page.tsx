@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { settingsSchema, SettingsFormData } from "@/lib/validations";
 import { Loader2, Save } from "lucide-react";
 import toast from "react-hot-toast";
+import LoadingOverlay from "@/components/ui/LoadingOverlay";
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -15,10 +16,14 @@ export default function SettingsPage() {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
   });
+
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -54,6 +59,34 @@ export default function SettingsPage() {
     }
   };
 
+  const handleFaviconUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingFavicon(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "Gagal mengunggah favicon");
+      }
+
+      setValue("favicon_url", data.url);
+      toast.success("Favicon berhasil diunggah");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Gagal mengunggah favicon");
+    } finally {
+      setUploadingFavicon(false);
+    }
+  };
+
   const fields = [
     {
       key: "site_name" as const,
@@ -72,6 +105,12 @@ export default function SettingsPage() {
       label: "SEO Description",
       placeholder: "Temukan produk kesehatan terbaik dengan harga terjangkau.",
       hint: "Deskripsi meta untuk halaman landing page",
+    },
+    {
+      key: "favicon_url" as const,
+      label: "URL Favicon",
+      placeholder: "https://.../favicon.ico",
+      hint: "Link favicon yang tampil di browser tab.",
     },
     {
       key: "whatsapp_number" as const,
@@ -109,6 +148,9 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-xl mx-auto">
+      {(saving || uploadingFavicon) && (
+        <LoadingOverlay message={uploadingFavicon ? "Mengunggah favicon..." : "Menyimpan pengaturan..."} />
+      )}
       <div className="mb-6">
         <h1 className="font-display text-2xl font-bold text-gray-900">Pengaturan</h1>
         <p className="text-gray-500 text-sm mt-1">Konfigurasi website dan informasi pembayaran</p>
@@ -137,6 +179,30 @@ export default function SettingsPage() {
               <p className="text-gray-400 text-xs mt-1">{f.hint}</p>
             </div>
           ))}
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Upload Favicon
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFaviconUpload}
+              className="w-full text-sm text-gray-700 file:border-0 file:bg-brand-600 file:px-4 file:py-2 file:text-white file:rounded-xl"
+            />
+            <p className="text-gray-400 text-xs mt-1">
+              Unggah file favicon atau gunakan URL di atas. File akan disimpan di Supabase Storage.
+            </p>
+          </div>
+
+          {watch("favicon_url") && (
+            <div className="mt-3 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
+                <img src={watch("favicon_url") || ""} alt="Preview favicon" className="w-full h-full object-contain" />
+              </div>
+              <div className="text-sm text-gray-600 break-all">{watch("favicon_url")}</div>
+            </div>
+          )}
 
           <button
             type="submit"
