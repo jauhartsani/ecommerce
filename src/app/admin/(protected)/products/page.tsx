@@ -34,6 +34,15 @@ export default function ProductsPage() {
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<"basic" | "detail">("basic");
 
+  const categoryOptions = Array.from(
+    new Set(products.map((p) => p.category).filter(Boolean) as string[])
+  ).sort();
+
+  const galleryImages = form.gallery_urls
+    .split("\n")
+    .map((u) => u.trim())
+    .filter(Boolean);
+
   const fetchProducts = async () => {
     const res = await fetch("/api/products");
     const data = await res.json();
@@ -236,6 +245,9 @@ export default function ProductsPage() {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">URL Foto Utama</label>
                     <input type="url" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className={inputCls} placeholder="https://contoh.com/foto.jpg" />
+                    {form.image_url && (
+                      <p className="text-xs text-gray-400 mt-1 break-words">Preview: {form.image_url}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">Link Video TikTok</label>
@@ -244,7 +256,21 @@ export default function ProductsPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">Kategori</label>
-                    <input type="text" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputCls} placeholder="suplemen, vitamin, herbal..." />
+                    <div className="relative">
+                      <input
+                        list="category-options"
+                        type="text"
+                        value={form.category}
+                        onChange={(e) => setForm({ ...form, category: e.target.value })}
+                        className={inputCls}
+                        placeholder="suplemen, vitamin, herbal..."
+                      />
+                      <datalist id="category-options">
+                        {categoryOptions.map((category) => (
+                          <option key={category} value={category} />
+                        ))}
+                      </datalist>
+                    </div>
                   </div>
 
                   {/* Toggle switches */}
@@ -276,6 +302,16 @@ export default function ProductsPage() {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">URL Galeri (satu URL per baris)</label>
                     <textarea value={form.gallery_urls} onChange={(e) => setForm({ ...form, gallery_urls: e.target.value })} rows={4} className={inputCls + " resize-none font-mono text-xs"} placeholder={"https://contoh.com/foto1.jpg\nhttps://contoh.com/foto2.jpg"} />
+                    {galleryImages.length > 0 && (
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        {galleryImages.map((url, index) => (
+                          <div key={index} className="rounded-2xl border border-gray-200 p-2 text-xs text-gray-500 break-words">
+                            <div className="font-semibold text-gray-700">Gambar {index + 1}</div>
+                            <div>{url}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
