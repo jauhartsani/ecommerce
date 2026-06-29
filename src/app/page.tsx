@@ -61,6 +61,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${settings.site_name} — ${settings.seo_title_suffix || "Produk Kesehatan Terpercaya"}`,
     description: settings.seo_description || "Temukan produk kesehatan terbaik dengan harga terjangkau. Flash sale setiap hari!",
+    verification: {
+      google: "NnxHlqOU7nqp1zZa_hvhbZrr5Cf8-DphG4nNJtDocyM",
+    },
   };
 }
 
