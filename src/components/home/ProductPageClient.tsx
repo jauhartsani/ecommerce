@@ -38,7 +38,7 @@ export default function ProductPageClient({ product, settings, discount }: Props
 
   const images = [
     ...(product.image_url ? [product.image_url] : []),
-    ...((product.image_url ? [] : product.gallery_urls) || []),
+    ...(product.gallery_urls || []),
   ];
 
   const {
